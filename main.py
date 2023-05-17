@@ -4,7 +4,6 @@ import fileinput
 import random
 
 
-
 flag = 0
 del1 = "한"
 del2 = ":"
@@ -14,7 +13,18 @@ while(True):
     if flag == 0:
         check_step=input("Will you change the vocabulary list? [y/n]")
 
-    if check_step == 'y' or 'Y':
+    if check_step == 'n' or check_step =='N' or check_step =='':
+        try:
+            with open('vocabulary_list.pickle', 'rb') as f:
+                vocabulary_list = pickle.load(f)
+        except FileNotFoundError:
+            print("There are no files.")
+            flag=1
+            continue
+        break
+
+
+    if check_step == 'y' or check_step =='Y':
         vocabulary_list = []
         print("Paste down your list in vocabulary_list.txt")
         temp = input("[press any key to continue]")
@@ -37,28 +47,22 @@ while(True):
                 vocabulary_list.append(dct.vocabulary(word,meaning))
                 
 
-        with open('word_list.pickle', 'wb') as f:
+        with open('vocabulary_list.pickle', 'wb') as f:
             pickle.dump(vocabulary_list, f, pickle.HIGHEST_PROTOCOL)
         break
 
-    if check_step == 'n' or 'N':
-        try:
-            with open('vocabulary_list.pickle', 'rb') as f:
-                vocabulary_list = pickle.load(f)
-        except FileNotFoundError:
-            print("There are no files.")
-            flag=1
-            continue
-        break
 
-num_question = int(input("How many vocabulary want to test?: "))
+
+
 try:
+    num_question = int(input("How many vocabulary want to test?: "))
     num_question = min((num_question, len(vocabulary_list)))
 except ValueError:
     num_question = len(vocabulary_list)
 
-question_list = random.sample(vocabulary_list, num_question)
 
+question_list = random.sample(vocabulary_list, num_question)
+print(num_question,"vocabulary ready.")
 check_step = input("Will you check the question list? [press enter to check]")
 if check_step == '':
     for vocab in question_list:
